@@ -43,15 +43,6 @@ WHERE oi.ProductId IS NULL
 
 
 
-/*
-SELECT * FROM Products p
-WHERE NOT EXISTS (
-	SELECT oi.ProductId FROM OrderItems oi WHERE oi.ProductId = p.Id 
-);
-*/
-
-
-
 
 -- Agregar una venta del producto anterior en el dia de ayer al cliente "Antonio Moreno" que vive en "México D.F." por 10 unidades con precio unitario 13 y 10 cajas
 INSERT INTO Orders	(OrderDate, OrderNumber, CustomerId, TotalAmount)
@@ -177,17 +168,9 @@ ORDER BY 2
 
 ---------------------------------------------------------------------------------
 -- OBTENER LA CANTIDAD PROMEDIO DE ITEMS QUE COMPRA CADA CLIENTE
-	DECLARE @totalVentas int;
-	SET @totalVentas = (SELECT COUNT(*) FROM OrderItems);
-	-- SELECT FLOOR(3/(@totalVentas));
-
-	-- Total productos que ha comprado cada cliente
-	SELECT (COUNT(oi.OrderId)/@totalVentas) AS 'Total Comprados', c.Id AS 'ID Customer' FROM OrderItems oi
-	INNER JOIN Customers c ON c.Id = oi.OrderId
+	SELECT (AVG(oi.Quantity)) AS total, c.Id AS 'ID Customer' FROM OrderItems oi 
+	INNER JOIN Customers c ON c.Id = oi.OrderId 
 	GROUP BY OrderId, c.Id
-
-
-
 
 
 
