@@ -1,5 +1,5 @@
 -- Obtener el Nombre y Apellido de todos los clientes que hayan comprado algo entre 2013-01-01 y 2014-07-08 ordenados por nombre
-SELECT c.FirstName, c.LastName, o.OrderDate FROM Customers c
+SELECT c.FirstName, c.LastName FROM Customers c
 INNER JOIN Orders o on o.CustomerId = c.Id
 WHERE o.OrderDate >= '2013-01-01' AND o.OrderDate < '2014-07-08'
 ORDER BY c.FirstName
@@ -16,7 +16,7 @@ WHERE c.Country = 'Argentina'
 
 
 -- Obtener todos los proveedores que tengan productos discontinuados
-SELECT p.* FROM Suppliers s
+SELECT s.* FROM Suppliers s
 INNER JOIN Products p ON p.SupplierId = s.Id
 WHERE p.IsDiscontinued = 1
 
@@ -44,12 +44,12 @@ WHERE oi.ProductId IS NULL
 
 
 
--- Agregar una venta del producto anterior en el dia de ayer al cliente "Antonio Moreno" que vive en "México D.F." por 10 unidades con precio unitario 13 y 10 cajas
+-- Agregar una venta del producto anterior en el dia de ayer al cliente "Antonio Moreno" que vive en "MÃ©xico D.F." por 10 unidades con precio unitario 13 y 10 cajas
 INSERT INTO Orders	(OrderDate, OrderNumber, CustomerId, TotalAmount)
 			VALUES	(	
 						('2018-07-03'),
 						(SELECT MAX(OrderNumber+1) FROM Orders),
-						(SELECT Id FROM Customers WHERE FirstName='Antonio' AND LastName='Moreno' AND City='México D.F.'),
+						(SELECT Id FROM Customers WHERE FirstName='Antonio' AND LastName='Moreno' AND City='MÃ©xico D.F.'),
 						(SELECT (p.UnitPrice*10) FROM Products p LEFT OUTER JOIN OrderItems oi ON p.Id = oi.ProductId WHERE oi.ProductId IS NULL)					
 					)
 
@@ -91,12 +91,12 @@ SELECT AVG(TotalAmount) from Orders;
 
 
 
--- Promedio de gasto por cliente en la tienda (cual quier cosa que este en el select y no sea un agregado.. sum, min, count,etc.. Ha de estar en el group by tambien)
+-- Promedio de gasto al anio por cliente en la tienda (cual quier cosa que este en el select y no sea un agregado.. sum, min, count,etc.. Ha de estar en el group by tambien)
 SELECT year(o.OrderDate), o.CustomerId, avg(TotalAmount), sum(TotalAmount) from Orders o
 GROUP BY o.CustomerId, year(o.OrderDate)
 ORDER BY 2
 
-	-- De esta forma, es como la anterior, pero al agrupar por año, no se mezclan los años 
+	-- De esta forma, es como la anterior, pero al agrupar por aÃ±o, no se mezclan los aÃ±os 
 	SELECT month(o.OrderDate), year(o.OrderDate), o.CustomerId, avg(TotalAmount), sum(TotalAmount) from Orders o
 	GROUP BY o.CustomerId, year(o.OrderDate), month(o.OrderDate)
 	ORDER BY 3
@@ -104,7 +104,7 @@ ORDER BY 2
 
 
 
--- Promedio de gasto por cliente en la tienda, donde el promedio sea año a 500 (HAVING ES EL WHERE DENTRO DEL GROUP BY)
+-- Promedio de gasto por cliente en la tienda, donde el promedio sea aÃ±o a 500 (HAVING ES EL WHERE DENTRO DEL GROUP BY)
 SELECT year(o.OrderDate), o.CustomerId, avg(TotalAmount), sum(TotalAmount) from Orders o
 GROUP BY o.CustomerId, year(o.OrderDate)
 HAVING avg(TotalAmount) > 500
@@ -113,7 +113,7 @@ ORDER BY 2
 
 
 
--- Promedio y total de gasto por cliente por año en la tienda donde el promedio sea mayor a 500, para todas las compras desde el 2014 en adelante
+-- Promedio y total de gasto por cliente por aÃ±o en la tienda donde el promedio sea mayor a 500, para todas las compras desde el 2014 en adelante
 SELECT year(o.OrderDate), o.CustomerId, avg(TotalAmount), sum(TotalAmount) from Orders o 
 WHERE OrderDate >= '2014-01-01'
 GROUP BY o.CustomerId, year(o.OrderDate)
